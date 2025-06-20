@@ -2,30 +2,29 @@
 
 A RESTful task management API.
 
-## Requirements
+## Getting Started
 
-### API Endpoints
+### Prerequisites
 
-The API must provide the following endpoints:
+- Go 1.23
 
-- `GET /tasks` - Retrieve all tasks
-- `POST /tasks` - Create a new task
-- `PUT /tasks/{id}` - Update an existing task
-- `DELETE /tasks/{id}` - Delete a task
+## Project Structure
 
-### Task Model
+```text
+task-api/
+├── cmd/server/          # Main application entry point
+├── internal/
+│   ├── handlers/        # HTTP handlers/controllers
+│   ├── models/          # Data models and structs
+│   └── storage/         # Data storage layer
+├── tests/               # Test files
+└── docs/                # Project documentation
+```
 
-Each task must have the following fields:
+## Documentation
 
-- `name` (string) - The task name
-- `status` (integer) - Task completion status
-  - `0` = incomplete
-  - `1` = completed
+- [Requirements](docs/requirements.md) - Detailed project requirements and specifications
 
-### Technical Requirements
+## Development
 
-- **Language**: Go 1.18+
-- **Testing**: Unit tests with good coverage
-- **Containerization**: Dockerfile included
-- **Repository**: GitHub ready
-- **Storage**: In-memory data storage
+_Development setup and contribution guidelines will be added as the project evolves._
