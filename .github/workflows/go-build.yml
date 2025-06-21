@@ -1,0 +1,46 @@
+name: Go Build
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.10'
+      
+      - name: Download dependencies
+        run: go mod download
+      
+      - name: Build all packages
+        run: go build ./...
+      
+      - name: Build main binary
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            go build -o task-api.exe ./cmd/server
+          else
+            go build -o task-api ./cmd/server
+          fi
+      
+      - name: Test binary exists
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            test -f task-api.exe && echo "✅ Windows binary created"
+          else
+            test -f task-api && echo "✅ Unix binary created"
+          fi
