@@ -33,3 +33,22 @@ func NewTask(name string, status int) (*Task, error) {
 		Status: status,
 	}, nil
 }
+
+// Update modifies the task with new name and status, applying validation.
+// This method follows the fetch-modify-save pattern used in production systems.
+func (t *Task) Update(name string, status int) error {
+	// Validate name
+	if strings.TrimSpace(name) == "" {
+		return errors.New("task name cannot be empty")
+	}
+
+	// Validate status
+	if status < 0 || status > 1 {
+		return errors.New("status must be 0 (incomplete) or 1 (completed)")
+	}
+
+	// Apply changes
+	t.Name = name
+	t.Status = status
+	return nil
+}

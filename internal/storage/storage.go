@@ -56,11 +56,8 @@ func NewTaskStorage() TaskStorage {
 	backend := AutoDetectBackend()
 
 	switch backend {
-	case BackendMemory:
-		return NewInMemoryStorage()
 	case BackendDatabase:
 		// TODO: Implement database storage
-		// return NewDatabaseStorage(os.Getenv("DATABASE_URL"))
 		panic("Database backend not implemented yet. Remove DATABASE_URL to use memory backend.")
 	default:
 		return NewInMemoryStorage()

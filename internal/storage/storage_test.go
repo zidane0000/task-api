@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"os"
 	"task-api/internal/models"
 	"testing"
 )
@@ -239,4 +240,30 @@ func TestTaskStorage_Delete(t *testing.T) {
 	if err == nil {
 		t.Error("Expected error when getting deleted task")
 	}
+}
+
+// TestNewTaskStorage_DatabaseBackend tests the database backend detection
+func TestNewTaskStorage_DatabaseBackend(t *testing.T) {
+	// Set DATABASE_URL to trigger database backend detection
+	os.Setenv("DATABASE_URL", "postgres://localhost/testdb")
+
+	// This should panic because database backend is not yet implemented
+	defer func() {
+		if r := recover(); r != nil {
+			// Expected panic - database backend not implemented
+			expectedMessage := "Database backend not implemented yet. Remove DATABASE_URL to use memory backend."
+			if panicMsg, ok := r.(string); ok {
+				if panicMsg != expectedMessage {
+					t.Errorf("Expected panic message %q, got %q", expectedMessage, panicMsg)
+				}
+			} else {
+				t.Errorf("Expected string panic message, got %v", r)
+			}
+		} else {
+			t.Error("Expected panic when DATABASE_URL is set, but no panic occurred")
+		}
+	}()
+
+	// This should panic
+	NewTaskStorage()
 }
