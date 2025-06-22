@@ -1,0 +1,60 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Test files and coverage
+*_test.go
+coverage.out
+coverage.html
+tests/
+
+# Build artifacts and binaries
+*.exe
+*.dll
+*.so
+*.dylib
+main
+server
+task-api
+
+# GitHub workflows
+.github/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Go specific
+vendor/
+bin/
+dist/
+
+# Environment and config
+.env
+.env.local
+.env.*.local
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Docker related
+Dockerfile*
+.dockerignore
+docker-compose*.yml

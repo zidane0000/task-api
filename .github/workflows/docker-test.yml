@@ -1,0 +1,75 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build Docker image
+        run: docker build -t task-api .
+        
+      - name: Run Docker container
+        run: |
+          # Start container in background
+          docker run -d -p 8080:8080 --name test-container task-api
+          
+          # Wait for container to start
+          sleep 15
+          
+      - name: Test container health
+        run: |
+          # Test health endpoint
+          curl -f http://localhost:8080/health || exit 1
+          
+          # Test that it returns expected JSON
+          response=$(curl -s http://localhost:8080/health)
+          echo "Health response: $response"
+          
+          # Check if response contains expected fields
+          if echo "$response" | grep -q '"status":"healthy"'; then
+            echo "✅ Health check passed"
+          else
+            echo "❌ Health check failed"
+            exit 1
+          fi
+          
+      - name: Test API endpoints
+        run: |
+          # Test GET /tasks (should return empty array initially)
+          tasks_response=$(curl -s http://localhost:8080/tasks)
+          echo "Tasks response: $tasks_response"
+          
+          # Test POST /tasks (create a new task)
+          create_response=$(curl -s -X POST http://localhost:8080/tasks \
+            -H "Content-Type: application/json" \
+            -d '{"name":"Test Task","status":0}')
+          echo "Create response: $create_response"
+          
+          # Verify task was created
+          if echo "$create_response" | grep -q '"name":"Test Task"'; then
+            echo "✅ Task creation test passed"
+          else
+            echo "❌ Task creation test failed"
+            exit 1
+          fi
+          
+      - name: Check container logs
+        if: always()
+        run: |
+          echo "=== Container Logs ==="
+          docker logs test-container
+          
+      - name: Clean up
+        if: always()
+        run: |
+          docker stop test-container || true
+          docker rm test-container || true
+          docker rmi task-api || true
